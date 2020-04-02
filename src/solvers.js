@@ -63,86 +63,35 @@ window.findNRooksSolution = function(n) {
 
 // return the number of nxn chessboards that exist, with n rooks placed such that none of them can attack each other
 window.countNRooksSolutions = function(n) {
-  var solutionObj = {};
   let newBoard = new Board({n: n});
   var count = 0;
-  let hashMatrix = createHashMatrix(n);
-  newBoard.rowIdx = {}; //Remembers which row we have included a 1
-  newBoard.colIdx = {}; //Remember which column we have included a 1
 
   //Refactor the generation of new key:
   //Ideas: create a hashing function - see Jorge's repl.it
-  let findValidRook = function(possibleValues, newBoard) {
-    if (possibleValues === 0) {
-      let validMatrix = newBoard.attributes;
-      // let validMatrixStr = JSON.stringify(validMatrix);
-      let hash = generateHashKey(hashMatrix, validMatrix);
-
-      if (!solutionObj[hash]) {
-        count ++;
-        solutionObj[hash] = count;
-      }
+  let findValidRook = function(row, possibleValues, newBoard) {
+    if (row === possibleValues) {
+      count++;
       return;
     }
 
-    for (let i = 0; i < newBoard.attributes.n; i++) {
-      if (!newBoard.rowIdx[i]) {
-        for (let j = 0; j < newBoard.attributes.n; j++) {
-          if (!newBoard.colIdx[i]) {
-            newBoard.togglePiece(i, j);
-            newBoard.rowIdx[i] = true;
-            newBoard.colIdx[j] = true;
-            findValidRook(possibleValues - 1, newBoard);
-            newBoard.togglePiece(i, j);
-            newBoard.rowIdx[i] = false;
-            newBoard.colIdx[j] = false;
-          }
-          // if (!newBoard.hasColConflictAt(j)) {
-          //   colIdx[j] = true;
-          //   //Push current coordinates into changesArr
-          //   //Pop off current coordinates into changesArr
-          //   newBoard.togglePiece(i, j);
-          // } else {
-          //   newBoard.togglePiece(i, j);
-          // }
-        }
+    //Loop through the columns
+    for (let i = 0; i < possibleValues; i++) {
+      //Toggle at row, i
+      newBoard.togglePiece(row, i);
+      if (!newBoard.hasAnyRooksConflicts()) {
+        findValidRook(row + 1, possibleValues, newBoard);
       }
+      newBoard.togglePiece(row, i);
     }
+
+    return count;
   };
 
-  // this.attributes[i][j]
-
-  findValidRook(n, newBoard);
+  findValidRook(0, n, newBoard);
   let solutionCount = count;
 
   console.log('Number of solutions for ' + n + ' rooks:', solutionCount);
   return solutionCount;
-};
-
-window.createHashMatrix = function(n) {
-  let arr = [];
-  for (let i = 0; i < n; i++) {
-    let temp = [];
-    for (let j = 0; j < n; j++) {
-      temp.push(Math.floor(Math.random() * 100000000000));
-    }
-    arr.push(temp);
-  }
-  return arr;
-};
-
-window.generateHashKey = function(hashMatrix, validBoard) {
-  let hashKey = 0;
-  for (let i = 0; i < validBoard.n; i++) {
-    for (let j = 0; j < validBoard.n; j++) {
-      if (validBoard[i][j] === 0) {
-        continue;
-      } else {
-        hashKey += validBoard[i][j] * hashMatrix[i][j];
-      }
-    }
-  }
-  return hashKey;
 };
 
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n queens placed such that none of them can attack each other
