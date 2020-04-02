@@ -66,15 +66,20 @@ window.countNRooksSolutions = function(n) {
   var solutionObj = {};
   let newBoard = new Board({n: n});
   var count = 0;
+  let hashMatrix = createHashMatrix(n);
 
+  //Refactor the generation of new key:
+  //Ideas: create a hashing function - see Jorge's repl.it
   let findValidRook = function(possibleValues, newBoard) {
     if (possibleValues === 0) {
+      debugger;
       let validMatrix = newBoard.attributes;
-      let validMatrixStr = JSON.stringify(validMatrix);
+      // let validMatrixStr = JSON.stringify(validMatrix);
+      let hash = generateHashKey(hashMatrix, validMatrix);
 
-      if (!solutionObj[validMatrixStr]) {
+      if (!solutionObj[hash]) {
         count ++;
-        solutionObj[validMatrixStr] = count;
+        solutionObj[hash] = count;
       }
       return;
     }
@@ -95,11 +100,38 @@ window.countNRooksSolutions = function(n) {
       }
     }
   };
+
   findValidRook(n, newBoard);
-  let solutionCount = Object.keys(solutionObj).length;
+  let solutionCount = count;
 
   console.log('Number of solutions for ' + n + ' rooks:', solutionCount);
   return solutionCount;
+};
+
+window.createHashMatrix = function(n) {
+  let arr = [];
+  for (let i = 0; i < n; i++) {
+    let temp = [];
+    for (let j = 0; j < n; j++) {
+      temp.push(Math.floor(Math.random() * 100000000000));
+    }
+    arr.push(temp);
+  }
+  return arr;
+};
+
+window.generateHashKey = function(hashMatrix, validBoard) {
+  let hashKey = 0;
+  for (let i = 0; i < validBoard.n; i++) {
+    for (let j = 0; j < validBoard.n; j++) {
+      if (validBoard[i][j] === 0) {
+        continue;
+      } else {
+        hashKey += validBoard[i][j] * hashMatrix[i][j];
+      }
+    }
+  }
+  return hashKey;
 };
 
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n queens placed such that none of them can attack each other

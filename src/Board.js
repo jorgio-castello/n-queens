@@ -112,12 +112,11 @@
     //
     // test if a specific column on this board contains a conflict
     hasColConflictAt: function(colIndex) {
-      let rows = this.rows();
       let conflictArr = [];
 
-      for (let i = 0; i < rows.length; i++) {
-        if (rows[i][colIndex] === 1) {
-          conflictArr.push(rows[i][colIndex]);
+      for (let i = 0; i < this.attributes.n; i++) {
+        if (this.attributes[i][colIndex] === 1) {
+          conflictArr.push(this.attributes[i][colIndex]);
         }
       }
       return conflictArr.length > 1;
@@ -143,12 +142,12 @@
       //Declare conflictArr
       let conflictArr = [];
       //Declare rows = this.rows();
-      let rows = this.rows();
+      // let rows = this.rows();
 
       //Loop through the rows
       while (this._isInBounds(rowStartIndex, majorDiagonalColumnIndexAtFirstRow)) {
-        if (rows[rowStartIndex][majorDiagonalColumnIndexAtFirstRow] === 1) {
-          conflictArr.push(rows[rowStartIndex][majorDiagonalColumnIndexAtFirstRow]);
+        if (this.attributes[rowStartIndex][majorDiagonalColumnIndexAtFirstRow] === 1) {
+          conflictArr.push(this.attributes[rowStartIndex][majorDiagonalColumnIndexAtFirstRow]);
         }
         rowStartIndex++;
         majorDiagonalColumnIndexAtFirstRow++;
@@ -186,11 +185,11 @@
       // assign conflict array
       let conflictArr = [];
       // assign this.rows() to rows
-      let rows = this.rows();
+      // let this.attributes = this.rows();
 
       while (this._isInBounds(rowStartIndex, minorDiagonalColumnIndexAtFirstRow)) {
-        if (rows[rowStartIndex][minorDiagonalColumnIndexAtFirstRow] === 1) {
-          conflictArr.push(rows[rowStartIndex][minorDiagonalColumnIndexAtFirstRow]);
+        if (this.attributes[rowStartIndex][minorDiagonalColumnIndexAtFirstRow] === 1) {
+          conflictArr.push(this.attributes[rowStartIndex][minorDiagonalColumnIndexAtFirstRow]);
         }
         rowStartIndex++;
         minorDiagonalColumnIndexAtFirstRow--;
