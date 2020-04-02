@@ -70,7 +70,6 @@ describe('Board', function() {
       [0, 0, 0, 0]
     ]);
 
-    debugger;
     verifyConflictTypes(['minorDiagonal', 'queens'], [
       [0, 0, 0, 0],
       [0, 0, 0, 0],
