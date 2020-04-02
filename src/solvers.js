@@ -67,12 +67,13 @@ window.countNRooksSolutions = function(n) {
   let newBoard = new Board({n: n});
   var count = 0;
   let hashMatrix = createHashMatrix(n);
+  newBoard.rowIdx = {}; //Remembers which row we have included a 1
+  newBoard.colIdx = {}; //Remember which column we have included a 1
 
   //Refactor the generation of new key:
   //Ideas: create a hashing function - see Jorge's repl.it
   let findValidRook = function(possibleValues, newBoard) {
     if (possibleValues === 0) {
-      debugger;
       let validMatrix = newBoard.attributes;
       // let validMatrixStr = JSON.stringify(validMatrix);
       let hash = generateHashKey(hashMatrix, validMatrix);
@@ -85,21 +86,31 @@ window.countNRooksSolutions = function(n) {
     }
 
     for (let i = 0; i < newBoard.attributes.n; i++) {
-      if (newBoard.attributes[i].indexOf(1) < 0) {
+      if (!newBoard.rowIdx[i]) {
         for (let j = 0; j < newBoard.attributes.n; j++) {
-          newBoard.togglePiece(i, j);
-          if (!newBoard.hasColConflictAt(j)) {
-            //Push current coordinates into changesArr
+          if (!newBoard.colIdx[i]) {
+            newBoard.togglePiece(i, j);
+            newBoard.rowIdx[i] = true;
+            newBoard.colIdx[j] = true;
             findValidRook(possibleValues - 1, newBoard);
-            //Pop off current coordinates into changesArr
             newBoard.togglePiece(i, j);
-          } else {
-            newBoard.togglePiece(i, j);
+            newBoard.rowIdx[i] = false;
+            newBoard.colIdx[j] = false;
           }
+          // if (!newBoard.hasColConflictAt(j)) {
+          //   colIdx[j] = true;
+          //   //Push current coordinates into changesArr
+          //   //Pop off current coordinates into changesArr
+          //   newBoard.togglePiece(i, j);
+          // } else {
+          //   newBoard.togglePiece(i, j);
+          // }
         }
       }
     }
   };
+
+  // this.attributes[i][j]
 
   findValidRook(n, newBoard);
   let solutionCount = count;
