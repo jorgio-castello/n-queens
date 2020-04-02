@@ -22,26 +22,41 @@
 
 
 window.findNRooksSolution = function(n) {
-  var solution = undefined; //fixme
+  // var solution = undefined; //fixme
   //Create a new Board({n: n})
-  //after first recursion: board's changes array, will include [permuations of the original board]
-  //after second recursion: each of the original board's permuations, will have their changes array populated with their own permutations
-  //n recursion:
-  // base case
+  var newBoard = new Board({'n': n});
+  //Declare chessBoard and assign it to newBoard.rows()
+  // var chessBoard = newBoard.rows();
 
-  // an inner function
-  // this function will accept possible values, and the current state of the board
-  // Loop over the rows - first pass i = 0
-  //if the sum of rows[i] elements is equal to 1, do not run nested for loop
-    // Loop over the columns - first pass i = 0
-  // Toggle the element at [i][i]
-  // See if the current board passes its respective tests (rook) && if the board isn't already fully populated
-  // parameterBoard.changes.push(generatePermutations(possibleValues - 1, ))
+  // define recursive function findValidRook with parameters possibleValues and newBoard
+  var findValidRook = function(possibleValues, newBoard) {
+    // base case to end recursion
+    if (possibleValues === 0) {
+      return newBoard.rows();
+    }
+    // loop over the chessBoard's rows (using attributes method and n length)
+    for (let i = 0; i < newBoard.attributes.n; i++) {
+      // if the sum of the rows' column indexes = zero
+      if ((newBoard.attributes[i].reduce((accum, element) => accum + element)) === 0) {
+        // iterate over the columns
+        for (let j = 0; j < newBoard.attributes.n; j++) {
+          // toggle the value at i
+          newBoard.togglePiece(i, j);
+          // if test chessBoard on hasAnyRooksConflicts method is false
+          if (newBoard.hasAnyRooksConflicts() === false) {
+            // recurse findValidRook with parameters (possibleValues - 1, chessBoard)
+            return findValidRook(possibleValues - 1, newBoard);
+          // otherwise
+          } else {
+            // toggle
+            newBoard.togglePiece(i, j);
+          }
+        }
+      }
+    }
+  };
 
-  // get a fully populated board
-
-  // recurse(possibleValues, newBoard)
-
+  let solution = findValidRook(n, newBoard);
   console.log('Single solution for ' + n + ' rooks:', JSON.stringify(solution));
   return solution;
 };
