@@ -69,22 +69,24 @@ window.countNRooksSolutions = function(n) {
 
   let findValidRook = function(possibleValues, newBoard) {
     if (possibleValues === 0) {
-      let validMatrix = newBoard.rows();
+      let validMatrix = newBoard.attributes;
       let validMatrixStr = JSON.stringify(validMatrix);
+
       if (!solutionObj[validMatrixStr]) {
         count ++;
         solutionObj[validMatrixStr] = count;
       }
-      validMatrix = JSON.parse(validMatrixStr);
       return;
     }
 
     for (let i = 0; i < newBoard.attributes.n; i++) {
-      if (newBoard.attributes[i].reduce((a, b) => a + b) === 0) {
+      if (newBoard.attributes[i].indexOf(1) < 0) {
         for (let j = 0; j < newBoard.attributes.n; j++) {
           newBoard.togglePiece(i, j);
-          if (!newBoard.hasAnyRooksConflicts()) {
+          if (!newBoard.hasColConflictAt(j)) {
+            //Push current coordinates into changesArr
             findValidRook(possibleValues - 1, newBoard);
+            //Pop off current coordinates into changesArr
             newBoard.togglePiece(i, j);
           } else {
             newBoard.togglePiece(i, j);
@@ -93,7 +95,6 @@ window.countNRooksSolutions = function(n) {
       }
     }
   };
-  debugger;
   findValidRook(n, newBoard);
   let solutionCount = Object.keys(solutionObj).length;
 
