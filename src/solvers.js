@@ -112,7 +112,7 @@ window.findNQueensSolution = function(n) {
       // toogle the piece at row, i
       newBoard.togglePiece(row, i);
       // check if its valid by queens tests
-      if (!newBoard.hasAnyRooksConflicts()) {
+      if (!newBoard.hasAnyQueensConflicts()) {
         // let result = findqueens function (row + 1, posvals, newboard)
         let result = queensCurse(row + 1, possibleValues, newBoard);
         // if result true
@@ -135,7 +135,34 @@ window.findNQueensSolution = function(n) {
 
 // return the number of nxn chessboards that exist, with n queens placed such that none of them can attack each other
 window.countNQueensSolutions = function(n) {
-  var solutionCount = undefined; //fixme
+  let newBoard = new Board({n: n});
+  var solutionCount = 0;
+
+  //Define an inner function to determine number of possible valid boards for a given n-dimensional setup
+  //The goal here is to loop through the columns and recurse through the rows
+  let findNQueens = function(row, possibleValues, newBoard) {
+    //Base Case: Recurse until rows reach the value of n
+    if (row === possibleValues) {
+      solutionCount++;
+      return; //Get out of this recursive call
+    }
+
+    //Loop through the columns
+    for (let i = 0; i < n; i++) {
+      //For each position of (row, column) toggle the value
+      newBoard.togglePiece(row, i);
+      //Check to see if there are any issues with our conflictsQueen method
+      if (!newBoard.hasAnyQueensConflicts()) {
+        //If no conflicts, invoke the inner function on row + 1, possible values, and the current state of the board
+        findNQueens(row + 1, possibleValues, newBoard);
+      }
+      //Toggle the value from 1 to 0
+      newBoard.togglePiece(row, i);
+    }
+  };
+
+  //Invoke the inner function on row = 0, n, and the newBoard
+  findNQueens(0, n, newBoard);
 
   console.log('Number of solutions for ' + n + ' queens:', solutionCount);
   return solutionCount;
